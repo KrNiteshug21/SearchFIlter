@@ -1,24 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import Product from "./Product";
 
 function App() {
+  const [product, setProduct] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const filteredProduct = product.filter((pro) =>
+    pro.title.toLowerCase().includes(search.toLowerCase())
+  );
+  console.log(filteredProduct);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const url = `https://dummyjson.com/products`;
+      try {
+        const response = await fetch(url);
+        const newProduct = await response.json();
+        console.log(newProduct.products);
+        setProduct(newProduct.products);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main className="App">
+      <div className="setWidth">
+        <header className="header">Welcome to my page</header>
+        <form className="form">
+          <label htmlFor="product">Search</label>
+          <input
+            id="products"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search..."
+          />
+        </form>
+        <section className="productWrapper">
+          {filteredProduct.map((pro) => (
+            <Product pro={pro} key={pro.id} />
+          ))}
+        </section>
+      </div>
+    </main>
   );
 }
 
